@@ -11,5 +11,20 @@ pipeline {
                 sh 'mvn package'
             }
         }
+        stage('SonarQube'){
+            steps {
+              withSonarQubeEnv('sonar'){
+                sh 'mvn sonar:sonar'
+               }
+             }
+        }
+        
+        stage('WaitQualityGate'){
+            steps {
+              timeout(time: 1, unit: 'HOURS') {
+                waitForQualityGate abortPipeline: true
+              }
+            }
+         }
     }
 }
